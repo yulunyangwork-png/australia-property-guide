@@ -807,6 +807,23 @@ select:focus,
   color: var(--white);
 }
 
+.admin-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.admin-header-actions .btn.outline {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: var(--white);
+}
+
+.btn.logout {
+  background: var(--white);
+  color: var(--black);
+}
+
 .admin-tabs {
   display: flex;
   gap: 10px;
@@ -1008,6 +1025,10 @@ select:focus,
   .panel-heading-row {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .admin-header-actions {
+    justify-content: flex-start;
   }
 }
 

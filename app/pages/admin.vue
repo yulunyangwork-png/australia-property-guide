@@ -81,6 +81,23 @@ async function unlockAdmin(showError = true) {
   }
 }
 
+function logoutAdmin() {
+  window.sessionStorage.removeItem('angela-admin-password')
+  password.value = ''
+  unlocked.value = false
+  loginError.value = ''
+  activeTab.value = 'articles'
+  articleMessage.value = ''
+  articleListError.value = ''
+  leadMessage.value = ''
+  leadListError.value = ''
+  articles.value = []
+  leads.value = []
+  deletingArticleId.value = null
+  deletingLeadId.value = null
+  resetArticleForm()
+}
+
 async function loadArticles() {
   if (!unlocked.value) {
     return
@@ -329,7 +346,10 @@ useSeoMeta({
             <h1>內容管理後台</h1>
           </div>
 
-          <NuxtLink class="btn outline" to="/">回到首頁</NuxtLink>
+          <div class="admin-header-actions">
+            <NuxtLink class="btn outline" to="/">回到首頁</NuxtLink>
+            <button class="btn logout" type="button" @click="logoutAdmin">登出</button>
+          </div>
         </header>
 
         <div class="admin-tabs">
