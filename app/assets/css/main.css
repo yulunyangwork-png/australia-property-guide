@@ -928,6 +928,10 @@ select:focus,
   min-width: 900px;
 }
 
+.lead-management-table {
+  min-width: 860px;
+}
+
 .lead-table th,
 .lead-table td {
   border-bottom: 1px solid var(--line);

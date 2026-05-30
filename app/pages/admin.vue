@@ -33,6 +33,9 @@ const deletingArticleId = ref<string | null>(null)
 const editingArticleId = ref<string | null>(null)
 const leads = ref<Lead[]>([])
 const loadingLeads = ref(false)
+const deletingLeadId = ref<string | null>(null)
+const leadMessage = ref('')
+const leadListError = ref('')
 const isEditingArticle = computed(() => Boolean(editingArticleId.value))
 
 const articleForm = reactive({
@@ -231,13 +234,49 @@ async function loadLeads() {
   }
 
   loadingLeads.value = true
+  leadListError.value = ''
 
   try {
     leads.value = await $fetch<Lead[]>('/api/leads', {
       headers: adminHeaders(),
     })
+  } catch {
+    leadListError.value = '客戶名單載入失敗，請重新整理後再試一次。'
   } finally {
     loadingLeads.value = false
+  }
+}
+
+async function deleteLeadItem(lead: Lead) {
+  const firstConfirm = window.confirm(`確定要刪除「${lead.name}」的名單資料嗎？`)
+
+  if (!firstConfirm) {
+    return
+  }
+
+  const secondConfirm = window.confirm('再次確認：刪除後無法復原，仍要刪除這筆客戶名單嗎？')
+
+  if (!secondConfirm) {
+    return
+  }
+
+  deletingLeadId.value = lead.id
+  leadMessage.value = ''
+  leadListError.value = ''
+
+  try {
+    await $fetch(`/api/leads/${lead.id}`, {
+      method: 'DELETE',
+      headers: adminHeaders(),
+    })
+
+    await loadLeads()
+    activeTab.value = 'leads'
+    leadMessage.value = `已刪除「${lead.name}」的名單資料。`
+  } catch {
+    leadListError.value = '刪除失敗，請稍後再試一次。'
+  } finally {
+    deletingLeadId.value = null
   }
 }
 
@@ -467,16 +506,20 @@ useSeoMeta({
             <p>首頁底部表單送出的姓名、Email 與 LINE / WhatsApp 會出現在這裡。</p>
           </div>
 
+          <p v-if="leadMessage" class="form-message success">{{ leadMessage }}</p>
+          <p v-if="leadListError" class="form-message error">{{ leadListError }}</p>
+
           <div v-if="loadingLeads" class="empty-state">名單載入中...</div>
           <div v-else-if="!leads.length" class="empty-state">目前尚無客戶名單。</div>
           <div v-else class="lead-table-wrap">
-            <table class="lead-table">
+            <table class="lead-table lead-management-table">
               <thead>
                 <tr>
                   <th>姓名</th>
                   <th>Email</th>
                   <th>LINE / WhatsApp</th>
                   <th>送出時間</th>
+                  <th>操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -485,6 +528,16 @@ useSeoMeta({
                   <td><a :href="`mailto:${lead.email}`">{{ lead.email }}</a></td>
                   <td>{{ lead.messenger }}</td>
                   <td>{{ formatDate(lead.createdAt) }}</td>
+                  <td>
+                    <button
+                      class="btn small danger"
+                      type="button"
+                      :disabled="deletingLeadId === lead.id"
+                      @click="deleteLeadItem(lead)"
+                    >
+                      {{ deletingLeadId === lead.id ? '刪除中...' : '刪除' }}
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>

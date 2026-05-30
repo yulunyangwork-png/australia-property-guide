@@ -177,7 +177,21 @@ export async function writeLeads(leads: Lead[]) {
     return
   }
 
-  await writeJson(leadsFile, leads)
+  await writeJson(leadsFile, sortByCreatedAt(leads))
+}
+
+export async function deleteLead(id: string) {
+  if (hasSupabaseConfig()) {
+    await deleteSupabaseLead(id)
+    return
+  }
+
+  const leads = await readJson<Lead[]>(leadsFile, [])
+
+  await writeJson(
+    leadsFile,
+    leads.filter((lead) => lead.id !== id),
+  )
 }
 
 export function createArticleId(title: string) {
@@ -323,6 +337,12 @@ async function upsertSupabaseLeads(leads: Lead[]) {
       Prefer: 'resolution=merge-duplicates',
     },
     body: JSON.stringify(leads.map(toLeadRow)),
+  })
+}
+
+async function deleteSupabaseLead(id: string) {
+  await supabaseRequest(`leads?id=eq.${encodeURIComponent(id)}`, {
+    method: 'DELETE',
   })
 }
 
