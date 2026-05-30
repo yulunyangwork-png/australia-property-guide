@@ -179,7 +179,6 @@ useSeoMeta({
           <div class="section-copy">
             <p class="eyebrow">Featured Articles</p>
             <h2>精選文章 Featured Articles</h2>
-            <p>第一版網站重點是 Blog SEO：用中文內容吸引海外買家與準備移居澳洲的家庭。</p>
           </div>
         </div>
 
