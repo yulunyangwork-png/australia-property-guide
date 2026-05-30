@@ -336,6 +336,8 @@ useSeoMeta({
             <button class="btn primary" type="submit">解鎖後台</button>
             <p v-if="loginError" class="form-message error">{{ loginError }}</p>
           </form>
+
+          <NuxtLink class="btn outline login-home-link" to="/">回到首頁</NuxtLink>
         </div>
       </section>
 

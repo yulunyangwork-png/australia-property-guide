@@ -788,6 +788,11 @@ select:focus,
   margin-top: 24px;
 }
 
+.login-home-link {
+  width: 100%;
+  margin-top: 14px;
+}
+
 .admin-shell {
   width: min(1160px, 100%);
   margin: 0 auto;
