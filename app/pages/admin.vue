@@ -329,7 +329,7 @@ useSeoMeta({
                 v-model="password"
                 type="password"
                 autocomplete="current-password"
-                placeholder="Angela2026"
+                placeholder="請輸入管理員密碼"
                 required
               >
             </label>
