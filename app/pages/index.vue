@@ -199,7 +199,7 @@ useSeoMeta({
           <p class="eyebrow">About Angela</p>
           <h2>懂中文客戶，也懂澳洲在地市場。</h2>
           <p>
-            Angela 專注協助海外華人與亞洲家庭理解澳洲房地產、布里斯本區域、學校生活與移居流程。網站將以 Blog 建立長期信任，讓客戶在聯絡前已經感受到專業度。
+            Angela 專注協助海外華人與亞洲家庭理解澳洲房地產、布里斯本區域、學校生活與移居流程。
           </p>
           <div class="chips">
             <span>布里斯本房產</span>
