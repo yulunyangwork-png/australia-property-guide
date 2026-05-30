@@ -216,9 +216,6 @@ useSeoMeta({
           <div>
             <p class="eyebrow">Free Download</p>
             <h2>免費下載 Brisbane 買房指南</h2>
-            <p>
-              用免費 PDF 收集潛在客戶名單，再導入 WhatsApp / LINE 後續跟進。
-            </p>
           </div>
 
           <form class="form-card" @submit.prevent="submitLead">
