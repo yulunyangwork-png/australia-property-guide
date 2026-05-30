@@ -821,8 +821,38 @@ select:focus,
   margin-bottom: 24px;
 }
 
+.panel-heading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.panel-heading-row > div {
+  max-width: 760px;
+}
+
 .publish-form {
   max-width: 860px;
+}
+
+.admin-inline-actions,
+.article-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn.small {
+  min-height: 36px;
+  padding: 8px 13px;
+  font-size: 13px;
+}
+
+.btn.danger {
+  border-color: rgba(159, 48, 44, 0.22);
+  background: #fff2f0;
+  color: var(--danger);
 }
 
 .editor-shell {
@@ -894,6 +924,10 @@ select:focus,
   min-width: 760px;
 }
 
+.article-table {
+  min-width: 900px;
+}
+
 .lead-table th,
 .lead-table td {
   border-bottom: 1px solid var(--line);
@@ -916,6 +950,28 @@ select:focus,
 .lead-table a {
   color: var(--gold-deep);
   font-weight: 900;
+}
+
+.article-table-title {
+  width: 44%;
+}
+
+.article-table-title strong,
+.article-table-title span {
+  display: block;
+}
+
+.article-table-title strong {
+  color: var(--black);
+  font-size: 16px;
+}
+
+.article-table-title span {
+  max-width: 500px;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 @media (max-width: 900px) {
@@ -944,7 +1000,8 @@ select:focus,
   }
 
   .section-row,
-  .admin-header {
+  .admin-header,
+  .panel-heading-row {
     align-items: flex-start;
     flex-direction: column;
   }

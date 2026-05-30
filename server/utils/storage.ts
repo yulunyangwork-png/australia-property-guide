@@ -124,7 +124,39 @@ export async function writeArticles(articles: Article[]) {
     return
   }
 
-  await writeJson(articlesFile, articles)
+  await writeJson(articlesFile, sortByCreatedAt(articles))
+}
+
+export async function saveArticle(article: Article) {
+  if (hasSupabaseConfig()) {
+    await upsertSupabaseArticles([article])
+    return
+  }
+
+  const articles = await readJson<Article[]>(articlesFile, seededArticles)
+  const articleIndex = articles.findIndex((item) => item.id === article.id)
+
+  if (articleIndex >= 0) {
+    articles[articleIndex] = article
+  } else {
+    articles.unshift(article)
+  }
+
+  await writeJson(articlesFile, sortByCreatedAt(articles))
+}
+
+export async function deleteArticle(id: string) {
+  if (hasSupabaseConfig()) {
+    await deleteSupabaseArticle(id)
+    return
+  }
+
+  const articles = await readJson<Article[]>(articlesFile, seededArticles)
+
+  await writeJson(
+    articlesFile,
+    articles.filter((article) => article.id !== id),
+  )
 }
 
 export async function readLeads() {
@@ -262,6 +294,12 @@ async function upsertSupabaseArticles(articles: Article[]) {
       Prefer: 'resolution=merge-duplicates',
     },
     body: JSON.stringify(articles.map(toArticleRow)),
+  })
+}
+
+async function deleteSupabaseArticle(id: string) {
+  await supabaseRequest(`articles?id=eq.${encodeURIComponent(id)}`, {
+    method: 'DELETE',
   })
 }
 

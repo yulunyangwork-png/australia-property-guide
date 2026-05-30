@@ -1,17 +1,30 @@
 import {
   assertAdmin,
   cleanText,
-  createArticleId,
   createExcerpt,
   isArticleCategory,
   normalizeHeroImage,
-  saveArticle,
+  readArticles,
   sanitizeRichText,
+  saveArticle,
   type Article,
 } from '../../utils/storage'
 
 export default defineEventHandler(async (event) => {
   assertAdmin(event)
+
+  const id = getRouterParam(event, 'id')
+
+  if (!id) {
+    throw createError({ statusCode: 400, statusMessage: 'Article id is required' })
+  }
+
+  const articles = await readArticles()
+  const existingArticle = articles.find((article) => article.id === id)
+
+  if (!existingArticle) {
+    throw createError({ statusCode: 404, statusMessage: 'Article not found' })
+  }
 
   const body = await readBody<Partial<Article>>(event)
   const title = cleanText(body.title)
@@ -31,13 +44,13 @@ export default defineEventHandler(async (event) => {
   }
 
   const article: Article = {
-    id: createArticleId(title),
+    id,
     title,
     category,
     heroImage: normalizeHeroImage(body.heroImage),
     excerpt: createExcerpt(content),
     content,
-    createdAt: new Date().toISOString(),
+    createdAt: existingArticle.createdAt,
   }
 
   await saveArticle(article)
