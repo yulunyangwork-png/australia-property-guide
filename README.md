@@ -73,3 +73,14 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Private Deployment
+
+Set these Vercel environment variables to require a browser username/password before anyone can view the site:
+
+```bash
+SITE_LOCK_USERNAME=owner
+SITE_LOCK_PASSWORD=change-this-password
+```
+
+Add them in Vercel under Project Settings -> Environment Variables for Production and Preview, then redeploy. Remove `SITE_LOCK_PASSWORD` to make the site public again.
