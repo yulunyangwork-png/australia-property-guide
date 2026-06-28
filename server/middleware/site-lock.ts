@@ -4,6 +4,13 @@ export default defineEventHandler((event) => {
   const password = process.env.SITE_LOCK_PASSWORD
 
   if (!password) {
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') {
+      throw createError({
+        statusCode: 503,
+        statusMessage: 'Site locked',
+      })
+    }
+
     return
   }
 
