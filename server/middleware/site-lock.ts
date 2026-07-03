@@ -3,21 +3,10 @@ import { createHmac, timingSafeEqual } from 'node:crypto'
 const COOKIE_NAME = 'site_preview_auth'
 const LOGIN_PATH = '/_site-lock/login'
 const TOKEN_INPUT = 'site-lock-preview:v1'
+const FALLBACK_PREVIEW_PASSWORD = 'Angela2026'
 
 export default defineEventHandler(async (event) => {
-  const password = process.env.SITE_LOCK_PASSWORD
-  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1'
-
-  if (!password) {
-    if (isProduction) {
-      return renderGate(event, {
-        message: 'Preview password is not configured.',
-        showForm: false,
-      })
-    }
-
-    return
-  }
+  const password = getPreviewPassword()
 
   if (isAuthenticated(event, password)) {
     return
@@ -42,7 +31,7 @@ export default defineEventHandler(async (event) => {
 
     return renderGate(event, {
       statusCode: 401,
-      message: 'Password is incorrect.',
+      message: '密碼不正確，請再試一次。',
       redirect: normalizeRedirect(body.redirect),
     })
   }
@@ -67,6 +56,10 @@ function isAuthenticated(event: Parameters<Parameters<typeof defineEventHandler>
 
 function createToken(password: string) {
   return createHmac('sha256', password).update(TOKEN_INPUT).digest('hex')
+}
+
+function getPreviewPassword() {
+  return process.env.SITE_LOCK_PASSWORD || process.env.ADMIN_PASSWORD || FALLBACK_PREVIEW_PASSWORD
 }
 
 function acceptsHtml(event: Parameters<Parameters<typeof defineEventHandler>[0]>[0]) {
@@ -108,7 +101,7 @@ function renderGate(
   options: { statusCode?: number, message?: string, redirect?: string, showForm?: boolean } = {},
 ) {
   const statusCode = options.statusCode || 200
-  const message = options.message || 'Enter the preview password to continue.'
+  const message = options.message || '請輸入預覽密碼即可查看網站。'
   const redirect = normalizeRedirect(options.redirect)
   const showForm = options.showForm !== false
 
@@ -233,15 +226,15 @@ function renderGate(
 <body>
   <main>
     <p class="eyebrow">Private Preview</p>
-    <h1>Password required</h1>
+    <h1>請輸入密碼</h1>
     <p>${escapeHtml(message)}</p>
     ${showForm ? `<form method="post" action="${LOGIN_PATH}">
       <input type="hidden" name="redirect" value="${escapeHtml(redirect)}">
       <label>
-        Preview password
+        密碼
         <input type="password" name="password" autocomplete="current-password" autofocus required>
       </label>
-      <button type="submit">Continue</button>
+      <button type="submit">進入網站</button>
     </form>` : ''}
   </main>
 </body>

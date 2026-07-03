@@ -76,10 +76,10 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 
 ## Private Deployment
 
-Set this Vercel environment variable to require a preview password before anyone can view the site:
+Set this Vercel environment variable to choose the preview password:
 
 ```bash
 SITE_LOCK_PASSWORD=change-this-password
 ```
 
-Add it in Vercel under Project Settings -> Environment Variables for Production and Preview, then redeploy. Visitors will see a password page first, and the site will remember successful access with a browser cookie. Remove `SITE_LOCK_PASSWORD` to make the site public again.
+Add it in Vercel under Project Settings -> Environment Variables for Production and Preview, then redeploy. If this variable is not set, the preview gate falls back to `ADMIN_PASSWORD`, then the local fallback password. Visitors will see a password page first, and the site will remember successful access with a browser cookie.
