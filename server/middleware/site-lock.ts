@@ -11,8 +11,8 @@ export default defineEventHandler(async (event) => {
   if (!password) {
     if (isProduction) {
       return renderGate(event, {
-        statusCode: 503,
         message: 'Preview password is not configured.',
+        showForm: false,
       })
     }
 
@@ -105,11 +105,12 @@ function safeEquals(received: string, expected: string) {
 
 function renderGate(
   event: Parameters<Parameters<typeof defineEventHandler>[0]>[0],
-  options: { statusCode?: number, message?: string, redirect?: string } = {},
+  options: { statusCode?: number, message?: string, redirect?: string, showForm?: boolean } = {},
 ) {
   const statusCode = options.statusCode || 200
   const message = options.message || 'Enter the preview password to continue.'
   const redirect = normalizeRedirect(options.redirect)
+  const showForm = options.showForm !== false
 
   setResponseStatus(event, statusCode)
   setResponseHeader(event, 'Content-Type', 'text/html; charset=utf-8')
@@ -234,14 +235,14 @@ function renderGate(
     <p class="eyebrow">Private Preview</p>
     <h1>Password required</h1>
     <p>${escapeHtml(message)}</p>
-    <form method="post" action="${LOGIN_PATH}">
+    ${showForm ? `<form method="post" action="${LOGIN_PATH}">
       <input type="hidden" name="redirect" value="${escapeHtml(redirect)}">
       <label>
         Preview password
         <input type="password" name="password" autocomplete="current-password" autofocus required>
       </label>
       <button type="submit">Continue</button>
-    </form>
+    </form>` : ''}
   </main>
 </body>
 </html>`
