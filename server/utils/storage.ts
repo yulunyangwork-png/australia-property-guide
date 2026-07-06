@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { createError, getHeader, type H3Event } from 'h3'
 
-export const articleCategories = ['布里斯本房產', '首次購屋', '投資區域', '澳洲生活'] as const
+export const articleCategories = ['市場解讀', '地區分析', '買房步驟', '生活方式'] as const
 
 export type ArticleCategory = (typeof articleCategories)[number]
 
@@ -51,41 +51,41 @@ const dataDir = join(process.cwd(), '.data')
 const articlesFile = join(dataDir, 'articles.json')
 const leadsFile = join(dataDir, 'leads.json')
 const defaultSupabaseUrl = 'https://aiprxncwrkahjgpsktrb.supabase.co'
-const fallbackHero =
-  'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=1200&q=80'
+const fallbackHero = '/images/brisbane-property-hero.png'
 
 const seededArticles: Article[] = [
   {
-    id: 'brisbane-family-suburbs',
-    title: 'Brisbane 哪些區域適合亞洲家庭？',
-    category: '布里斯本房產',
-    heroImage:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    excerpt: '從學校、交通、生活機能與預算角度，整理適合家庭居住的區域。',
+    id: 'brisbane-market-trends',
+    title: '2024 布里斯班房地產市場趨勢與機會',
+    category: '市場解讀',
+    heroImage: '/images/brisbane-river-hero-concept.png',
+    excerpt:
+      '利率、供應與人口增長如何影響未來的房價走勢。',
     content:
-      '<p>從學校、交通、生活機能與預算角度，整理適合家庭居住的區域。</p><p><strong>Brisbane 買房</strong>不只是比較房價，也要把家庭日常、孩子上學與通勤節奏一起放進考量。</p>',
+      '<p>布里斯班市場不只看單一房價數字，更要同時理解人口流入、供應限制、利率環境與區域生活機能。</p><p><strong>好的決策來自清楚比較。</strong> 當您知道哪些因素真正影響未來需求，就能更穩定地篩選房源。</p>',
     createdAt: '2026-05-28T09:00:00.000Z',
   },
   {
-    id: 'australia-first-home-guide',
-    title: '澳洲首次購屋完整攻略',
-    category: '首次購屋',
-    heroImage:
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
-    excerpt: '整理首購補助、貸款準備、頭期款與看房流程。',
+    id: 'brisbane-area-comparison',
+    title: '熱門區域深度對比：內城 vs 東南 vs 西區',
+    category: '地區分析',
+    heroImage: '/images/brisbane-property-hero.png',
+    excerpt:
+      '學區、交通、生活配套與增值潛力全面對比。',
     content:
-      '<p>整理首購補助、貸款準備、頭期款與看房流程。</p><p>首次購屋最重要的是先建立順序：預算、貸款、區域、物件，再進入出價與合約。</p>',
+      '<p>每個區域都有不同的生活節奏與投資邏輯。內城重視便利性，東南區常與學區和家庭生活連結，西區則需要更仔細看交通與持有成本。</p><p>比較區域時，請把生活需求、預算、通勤和未來轉售一起放進同一張表。</p>',
     createdAt: '2026-05-24T09:00:00.000Z',
   },
   {
-    id: 'logan-investment-potential',
-    title: 'Logan 還值得投資嗎？',
-    category: '投資區域',
+    id: 'first-home-buying-process',
+    title: '首次置業完整流程：一步一步不踩坑',
+    category: '買房步驟',
     heroImage:
-      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
-    excerpt: '用租金、成長性、交通與人口結構分析投資潛力。',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
+    excerpt:
+      '從貸款預批到交割入住，關鍵步驟與注意事項。',
     content:
-      '<p>用租金、成長性、交通與人口結構分析投資潛力。</p><p>投資判斷不能只看價格，也要看租客需求、交通動線與長期人口結構。</p>',
+      '<p>第一次買房最怕資訊分散：貸款、看房、出價、合約、驗屋、保險與交割，每一步都有時間點與風險。</p><p>先建立流程地圖，再開始看房，能幫助您更冷靜地比較選項，也避免在壓力下做出倉促決定。</p>',
     createdAt: '2026-05-20T09:00:00.000Z',
   },
 ]
@@ -221,8 +221,14 @@ export function normalizeHeroImage(value: unknown) {
     return fallbackHero
   }
 
+  const trimmed = value.trim()
+
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
+    return trimmed
+  }
+
   try {
-    const url = new URL(value.trim())
+    const url = new URL(trimmed)
 
     if (url.protocol !== 'http:' && url.protocol !== 'https:') {
       return fallbackHero
@@ -267,7 +273,7 @@ export function sanitizeRichText(value: unknown) {
   )
 
   html = html.replace(
-    /<(?!\/?(?:p|br|strong|b|em|i|u|ul|ol|li|h2|h3|blockquote|a)\b)[^>]+>/gi,
+    /<(?!\/?(?:p|br|strong|b|em|i|u|ol|ul|li|h2|h3|blockquote|a)\b)[^>]+>/gi,
     '',
   )
 
@@ -389,6 +395,7 @@ function getSupabaseConfig(): SupabaseConfig | null {
     process.env.NUXT_SUPABASE_SERVICE_ROLE_KEY ||
     ''
   ).trim()
+
   if (!url || !key) {
     return null
   }
@@ -412,8 +419,8 @@ function fromArticleRow(row: ArticleRow): Article {
   return {
     id: row.id,
     title: row.title,
-    category: isArticleCategory(row.category) ? row.category : '澳洲生活',
-    heroImage: row.hero_image,
+    category: isArticleCategory(row.category) ? row.category : '生活方式',
+    heroImage: row.hero_image || fallbackHero,
     excerpt: row.excerpt,
     content: row.content,
     createdAt: row.created_at,

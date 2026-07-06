@@ -17,7 +17,7 @@ interface Lead {
   createdAt: string
 }
 
-const categories = ['布里斯本房產', '首次購屋', '投資區域', '澳洲生活']
+const categories = ['市場解讀', '地區分析', '買房步驟', '生活方式']
 const password = ref('')
 const unlocked = ref(false)
 const loginError = ref('')
@@ -76,7 +76,7 @@ async function unlockAdmin(showError = true) {
     unlocked.value = false
 
     if (showError) {
-      loginError.value = '密碼不正確，請再試一次。'
+      loginError.value = 'The password did not work. Please check it and try again.'
     }
   }
 }
@@ -109,7 +109,7 @@ async function loadArticles() {
   try {
     articles.value = await $fetch<Article[]>('/api/articles')
   } catch {
-    articleListError.value = '文章列表載入失敗，請重新整理後再試一次。'
+    articleListError.value = 'Articles could not be loaded. Please refresh and try again.'
   } finally {
     loadingArticles.value = false
   }
@@ -130,7 +130,7 @@ function setBlock(tag: 'p' | 'h2' | 'h3' | 'blockquote') {
 }
 
 function addLink() {
-  const url = window.prompt('貼上連結 URL')
+  const url = window.prompt('Paste the link URL')
 
   if (url) {
     runCommand('createLink', url)
@@ -197,25 +197,25 @@ async function publishArticle() {
     await loadArticles()
     activeTab.value = 'articles'
     articleMessage.value = wasEditing
-      ? `已更新「${savedArticle.title}」。`
-      : `已發布「${savedArticle.title}」，文章列表已更新。`
+      ? `"${savedArticle.title}" was updated.`
+      : `"${savedArticle.title}" was published.`
   } catch {
     publishError.value = wasEditing
-      ? '儲存失敗，請確認標題、分類與內文都已填寫。'
-      : '發布失敗，請確認標題、分類與內文都已填寫。'
+      ? 'The article could not be updated. Please check the fields and try again.'
+      : 'The article could not be published. Please check the fields and try again.'
   } finally {
     publishing.value = false
   }
 }
 
 async function deleteArticleItem(article: Article) {
-  const firstConfirm = window.confirm(`確定要刪除「${article.title}」嗎？`)
+  const firstConfirm = window.confirm(`Delete "${article.title}"?`)
 
   if (!firstConfirm) {
     return
   }
 
-  const secondConfirm = window.confirm('再次確認：刪除後無法復原，仍要刪除這篇文章嗎？')
+  const secondConfirm = window.confirm('This cannot be undone. Delete this article permanently?')
 
   if (!secondConfirm) {
     return
@@ -237,9 +237,9 @@ async function deleteArticleItem(article: Article) {
 
     await loadArticles()
     activeTab.value = 'articles'
-    articleMessage.value = `已刪除「${article.title}」。`
+    articleMessage.value = `"${article.title}" was deleted.`
   } catch {
-    articleListError.value = '刪除失敗，請稍後再試一次。'
+    articleListError.value = 'The article could not be deleted. Please try again.'
   } finally {
     deletingArticleId.value = null
   }
@@ -258,20 +258,20 @@ async function loadLeads() {
       headers: adminHeaders(),
     })
   } catch {
-    leadListError.value = '客戶名單載入失敗，請重新整理後再試一次。'
+    leadListError.value = 'Leads could not be loaded. Please refresh and try again.'
   } finally {
     loadingLeads.value = false
   }
 }
 
 async function deleteLeadItem(lead: Lead) {
-  const firstConfirm = window.confirm(`確定要刪除「${lead.name}」的名單資料嗎？`)
+  const firstConfirm = window.confirm(`Delete the lead for ${lead.name}?`)
 
   if (!firstConfirm) {
     return
   }
 
-  const secondConfirm = window.confirm('再次確認：刪除後無法復原，仍要刪除這筆客戶名單嗎？')
+  const secondConfirm = window.confirm('This cannot be undone. Delete this lead permanently?')
 
   if (!secondConfirm) {
     return
@@ -289,16 +289,16 @@ async function deleteLeadItem(lead: Lead) {
 
     await loadLeads()
     activeTab.value = 'leads'
-    leadMessage.value = `已刪除「${lead.name}」的名單資料。`
+    leadMessage.value = `${lead.name}'s lead was deleted.`
   } catch {
-    leadListError.value = '刪除失敗，請稍後再試一次。'
+    leadListError.value = 'The lead could not be deleted. Please try again.'
   } finally {
     deletingLeadId.value = null
   }
 }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat('zh-TW', {
+  return new Intl.DateTimeFormat('en-AU', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -319,25 +319,25 @@ useSeoMeta({
       <section v-if="!unlocked" class="admin-login">
         <div class="login-card">
           <p class="eyebrow">Private Admin</p>
-          <h1>Angela Blog 後台</h1>
-          <p>請輸入管理員密碼以發布文章與查看客戶名單。</p>
+          <h1>Angela content studio</h1>
+          <p>Sign in to publish articles and review guide requests.</p>
 
           <form @submit.prevent="unlockAdmin()">
             <label>
-              管理員密碼
+              Password
               <input
                 v-model="password"
                 type="password"
                 autocomplete="current-password"
-                placeholder="請輸入管理員密碼"
+                placeholder="Enter admin password"
                 required
               >
             </label>
-            <button class="btn primary" type="submit">解鎖後台</button>
+            <button class="btn primary" type="submit">Unlock admin</button>
             <p v-if="loginError" class="form-message error">{{ loginError }}</p>
           </form>
 
-          <NuxtLink class="btn outline login-home-link" to="/">回到首頁</NuxtLink>
+          <NuxtLink class="btn outline login-home-link" to="/">Back to site</NuxtLink>
         </div>
       </section>
 
@@ -345,12 +345,12 @@ useSeoMeta({
         <header class="admin-header">
           <div>
             <p class="eyebrow">Admin</p>
-            <h1>內容管理後台</h1>
+            <h1>Content dashboard</h1>
           </div>
 
           <div class="admin-header-actions">
-            <NuxtLink class="btn outline" to="/">回到首頁</NuxtLink>
-            <button class="btn logout" type="button" @click="logoutAdmin">登出</button>
+            <NuxtLink class="btn outline" to="/">Back to site</NuxtLink>
+            <button class="btn logout" type="button" @click="logoutAdmin">Log out</button>
           </div>
         </header>
 
@@ -361,7 +361,7 @@ useSeoMeta({
             type="button"
             @click="activeTab = 'articles'; loadArticles()"
           >
-            文章列表
+            Articles
           </button>
           <button
             class="tab-button"
@@ -369,7 +369,7 @@ useSeoMeta({
             type="button"
             @click="startNewArticle"
           >
-            發布新文章
+            Write
           </button>
           <button
             class="tab-button"
@@ -377,32 +377,32 @@ useSeoMeta({
             type="button"
             @click="activeTab = 'leads'; loadLeads()"
           >
-            客戶名單
+            Leads
           </button>
         </div>
 
         <section v-if="activeTab === 'articles'" class="admin-panel">
           <div class="panel-heading panel-heading-row">
             <div>
-              <h2>文章列表</h2>
-              <p>先查看目前所有文章，再選擇查看、編輯或刪除。發布後也會留在這裡更新列表。</p>
+              <h2>Published articles</h2>
+              <p>Review, edit, or remove public articles from the Brisbane guide.</p>
             </div>
-            <button class="btn primary" type="button" @click="startNewArticle">新增文章</button>
+            <button class="btn primary" type="button" @click="startNewArticle">New article</button>
           </div>
 
           <p v-if="articleMessage" class="form-message success">{{ articleMessage }}</p>
           <p v-if="articleListError" class="form-message error">{{ articleListError }}</p>
 
-          <div v-if="loadingArticles" class="empty-state">文章載入中...</div>
-          <div v-else-if="!articles.length" class="empty-state">目前尚無文章，先新增第一篇吧。</div>
+          <div v-if="loadingArticles" class="empty-state">Loading articles...</div>
+          <div v-else-if="!articles.length" class="empty-state">No articles yet.</div>
           <div v-else class="lead-table-wrap">
             <table class="lead-table article-table">
               <thead>
                 <tr>
-                  <th>文章</th>
-                  <th>分類</th>
-                  <th>建立時間</th>
-                  <th>操作</th>
+                  <th>Article</th>
+                  <th>Category</th>
+                  <th>Created</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -415,9 +415,9 @@ useSeoMeta({
                   <td>{{ formatDate(article.createdAt) }}</td>
                   <td>
                     <div class="article-admin-actions">
-                      <NuxtLink class="btn small outline" :to="`/blog/${article.id}`">查看</NuxtLink>
+                      <NuxtLink class="btn small outline" :to="`/blog/${article.id}`">View</NuxtLink>
                       <button class="btn small gold" type="button" @click="editArticle(article)">
-                        編輯
+                        Edit
                       </button>
                       <button
                         class="btn small danger"
@@ -425,7 +425,7 @@ useSeoMeta({
                         :disabled="deletingArticleId === article.id"
                         @click="deleteArticleItem(article)"
                       >
-                        {{ deletingArticleId === article.id ? '刪除中...' : '刪除' }}
+                        {{ deletingArticleId === article.id ? 'Deleting...' : 'Delete' }}
                       </button>
                     </div>
                   </td>
@@ -438,28 +438,33 @@ useSeoMeta({
         <section v-else-if="activeTab === 'publish'" class="admin-panel">
           <div class="panel-heading panel-heading-row">
             <div>
-              <h2>{{ isEditingArticle ? '編輯文章' : '發布新文章' }}</h2>
+              <h2>{{ isEditingArticle ? 'Edit article' : 'Write article' }}</h2>
               <p>
                 {{
                   isEditingArticle
-                    ? '修改後會留在後台並更新文章列表。'
-                    : '填入標題、分類、主圖與內文，發布後會留在後台並更新文章列表。'
+                    ? 'Update the article and save your changes.'
+                    : 'Draft a practical guide with a clear title, category, image, and body copy.'
                 }}
               </p>
             </div>
             <button class="btn outline" type="button" @click="activeTab = 'articles'; loadArticles()">
-              返回列表
+              Back to articles
             </button>
           </div>
 
           <form class="publish-form" @submit.prevent="publishArticle">
             <label>
-              文章標題
-              <input v-model="articleForm.title" type="text" placeholder="例如：第一次在 Brisbane 買房要注意什麼？" required>
+              Title
+              <input
+                v-model="articleForm.title"
+                type="text"
+                placeholder="Example: How to compare Brisbane school catchments"
+                required
+              >
             </label>
 
             <label>
-              文章分類
+              Category
               <select v-model="articleForm.category" required>
                 <option v-for="category in categories" :key="category" :value="category">
                   {{ category }}
@@ -468,18 +473,18 @@ useSeoMeta({
             </label>
 
             <label>
-              主圖 URL
+              Hero image URL
               <input
                 v-model="articleForm.heroImage"
-                type="url"
-                placeholder="https://images.unsplash.com/..."
+                type="text"
+                placeholder="/images/brisbane-property-hero.png or https://images.unsplash.com/..."
               >
             </label>
 
             <label>
-              文章內文
+              Article body
               <div class="editor-shell">
-                <div class="editor-toolbar" aria-label="富文本工具列">
+                <div class="editor-toolbar" aria-label="Article formatting tools">
                   <button type="button" @click="setBlock('p')">P</button>
                   <button type="button" @click="setBlock('h2')">H2</button>
                   <button type="button" @click="runCommand('bold')"><b>B</b></button>
@@ -491,7 +496,7 @@ useSeoMeta({
                   ref="editor"
                   class="rich-editor"
                   contenteditable="true"
-                  data-placeholder="在這裡撰寫文章內容，可斷行、加粗、加入列表與連結..."
+                  data-placeholder="Write the guide content here..."
                   @input="syncEditorContent"
                   @blur="syncEditorContent"
                 />
@@ -499,7 +504,7 @@ useSeoMeta({
             </label>
 
             <div v-if="articleForm.heroImage" class="image-preview">
-              <img :src="articleForm.heroImage" alt="文章主圖預覽">
+              <img :src="articleForm.heroImage" alt="Article hero preview">
             </div>
 
             <div class="admin-inline-actions">
@@ -507,15 +512,15 @@ useSeoMeta({
                 {{
                   publishing
                     ? isEditingArticle
-                      ? '儲存中...'
-                      : '發布中...'
+                      ? 'Updating...'
+                      : 'Publishing...'
                     : isEditingArticle
-                      ? '儲存變更'
-                      : '發布文章'
+                      ? 'Save changes'
+                      : 'Publish article'
                 }}
               </button>
               <button v-if="isEditingArticle" class="btn outline" type="button" @click="startNewArticle">
-                取消編輯
+                Start new article
               </button>
             </div>
             <p v-if="publishError" class="form-message error">{{ publishError }}</p>
@@ -524,24 +529,24 @@ useSeoMeta({
 
         <section v-else class="admin-panel">
           <div class="panel-heading">
-            <h2>免費下載買房指南名單</h2>
-            <p>首頁底部表單送出的姓名、Email 與 LINE / WhatsApp 會出現在這裡。</p>
+            <h2>Guide requests</h2>
+            <p>Review the people who requested the Brisbane planning guide.</p>
           </div>
 
           <p v-if="leadMessage" class="form-message success">{{ leadMessage }}</p>
           <p v-if="leadListError" class="form-message error">{{ leadListError }}</p>
 
-          <div v-if="loadingLeads" class="empty-state">名單載入中...</div>
-          <div v-else-if="!leads.length" class="empty-state">目前尚無客戶名單。</div>
+          <div v-if="loadingLeads" class="empty-state">Loading leads...</div>
+          <div v-else-if="!leads.length" class="empty-state">No leads yet.</div>
           <div v-else class="lead-table-wrap">
             <table class="lead-table lead-management-table">
               <thead>
                 <tr>
-                  <th>姓名</th>
+                  <th>Name</th>
                   <th>Email</th>
                   <th>LINE / WhatsApp</th>
-                  <th>送出時間</th>
-                  <th>操作</th>
+                  <th>Created</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -557,7 +562,7 @@ useSeoMeta({
                       :disabled="deletingLeadId === lead.id"
                       @click="deleteLeadItem(lead)"
                     >
-                      {{ deletingLeadId === lead.id ? '刪除中...' : '刪除' }}
+                      {{ deletingLeadId === lead.id ? 'Deleting...' : 'Delete' }}
                     </button>
                   </td>
                 </tr>

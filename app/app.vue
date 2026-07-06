@@ -9,7 +9,7 @@ useHead({
     {
       name: 'description',
       content:
-        'Angela Liao Brisbane Property & Lifestyle 提供中文買房、投資與安家指南，協助你理解布里斯本房產與生活。',
+        'Angela Liao 為華人買家與新移民提供布里斯班房產、地區與生活方式指南。',
     },
   ],
   link: [
@@ -17,7 +17,7 @@ useHead({
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
     {
       rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Playfair+Display:wght@500;700&display=swap',
+      href: 'https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap',
     },
   ],
 })

@@ -15,7 +15,7 @@ const { data: article, error } = await useFetch<Article>(`/api/articles/${route.
 if (error.value || !article.value) {
   throw createError({
     statusCode: 404,
-    statusMessage: '找不到這篇文章',
+    statusMessage: 'Article not found',
   })
 }
 
@@ -27,10 +27,12 @@ const formattedDate = computed(() =>
   }).format(new Date(article.value.createdAt)),
 )
 
+const heroSrc = computed(() => article.value?.heroImage || '/images/brisbane-property-hero.png')
+
 useSeoMeta({
-  title: () => article.value?.title || 'Blog',
-  description: () => article.value?.excerpt || 'Angela Liao 的 Brisbane 房產文章。',
-  ogImage: () => article.value?.heroImage,
+  title: () => article.value?.title || 'Articles',
+  description: () => article.value?.excerpt || '布里斯班房產與生活指南。',
+  ogImage: () => heroSrc.value,
 })
 </script>
 
@@ -41,13 +43,13 @@ useSeoMeta({
     <main>
       <article class="article-page">
         <header class="article-header">
-          <NuxtLink class="text-link" to="/blog">返回 Blog</NuxtLink>
+          <NuxtLink class="text-link" to="/blog">返回文章列表</NuxtLink>
           <p class="eyebrow">{{ article.category }}</p>
           <h1>{{ article.title }}</h1>
           <time :datetime="article.createdAt">{{ formattedDate }}</time>
         </header>
 
-        <img class="article-hero-image" :src="article.heroImage" :alt="article.title">
+        <img class="article-hero-image" :src="heroSrc" :alt="article.title">
 
         <div class="article-content" v-html="article.content" />
       </article>

@@ -19,12 +19,14 @@ const formattedDate = computed(() =>
     day: 'numeric',
   }).format(new Date(props.article.createdAt)),
 )
+
+const heroSrc = computed(() => props.article.heroImage || '/images/brisbane-property-hero.png')
 </script>
 
 <template>
   <article class="article-card">
     <NuxtLink class="article-image-link" :to="`/blog/${article.id}`">
-      <img :src="article.heroImage" :alt="article.title" loading="lazy" decoding="async">
+      <img :src="heroSrc" :alt="article.title" loading="lazy" decoding="async">
     </NuxtLink>
 
     <div class="article-card-body">
@@ -37,7 +39,7 @@ const formattedDate = computed(() =>
         <NuxtLink :to="`/blog/${article.id}`">{{ article.title }}</NuxtLink>
       </h3>
       <p>{{ article.excerpt }}</p>
-      <NuxtLink class="text-link" :to="`/blog/${article.id}`">閱讀文章</NuxtLink>
+      <NuxtLink class="text-link" :to="`/blog/${article.id}`">閱讀指南</NuxtLink>
     </div>
   </article>
 </template>
